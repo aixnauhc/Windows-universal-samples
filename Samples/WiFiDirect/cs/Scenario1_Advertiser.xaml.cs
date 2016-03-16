@@ -17,6 +17,8 @@ using Windows.Networking.Sockets;
 using Windows.UI.Core;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.Devices.Enumeration;
 using Windows.UI.Popups;
@@ -328,7 +330,26 @@ namespace SDKTemplate
             {
                 foreach (ConnectedDevice connectedDevice in lvConnectedDevices.SelectedItems)
                 {
-                    connectedDevice.SocketRW.WriteMessage(txtSendMessage.Text);
+                    StorageFile file = null;
+
+                    try
+                    {
+                        var task = PickAFile();
+                        task.Wait();
+                        file = task.Result;
+                    }
+                    catch
+                    {
+
+                    }
+                    if (file != null)
+                    {
+                        connectedDevice.SocketRW.WriteMessage(file.Name);
+                    }
+                    else
+                    {
+                        connectedDevice.SocketRW.WriteMessage("file pick error.");
+                    }
                 }
             }
             catch (Exception ex)
@@ -362,6 +383,31 @@ namespace SDKTemplate
             catch (Exception ex)
             {
                 rootPage.NotifyUser("Close threw an exception: " + ex.Message, NotifyType.ErrorMessage);
+            }
+        }
+
+        private async Task<StorageFile> PickAFile()
+        {
+            // Clear previous returned file name, if it exists, between iterations of this scenario
+            //OutputTextBlock.Text = "";
+
+            FileOpenPicker openPicker = new FileOpenPicker();
+            openPicker.ViewMode = PickerViewMode.Thumbnail;
+            openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            openPicker.FileTypeFilter.Add(".jpg");
+            openPicker.FileTypeFilter.Add(".jpeg");
+            openPicker.FileTypeFilter.Add(".png");
+            StorageFile file = await openPicker.PickSingleFileAsync();
+            if (file != null)
+            {
+                // Application now has read/write access to the picked file
+                // OutputTextBlock.Text = "Picked photo: " + file.Name;
+                return file;
+            }
+            else
+            {
+                // OutputTextBlock.Text = "Operation cancelled.";
+                return null;
             }
         }
     }
