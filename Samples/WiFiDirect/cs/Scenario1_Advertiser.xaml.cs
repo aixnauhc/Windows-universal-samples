@@ -312,7 +312,7 @@ namespace SDKTemplate
             rootPage.NotifyUserFromBackground("Connection status changed: " + sender.ConnectionStatus, NotifyType.StatusMessage);
         }
 
-        private void btnSendMessage_Click(object sender, RoutedEventArgs e)
+        private async void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
             if (lvConnectedDevices.SelectedItems.Count == 0)
             {
@@ -334,9 +334,7 @@ namespace SDKTemplate
 
                     try
                     {
-                        var task = PickAFile();
-                        task.Wait();
-                        file = task.Result;
+                        file = await PickAFile();
                     }
                     catch
                     {
