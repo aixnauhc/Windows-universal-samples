@@ -109,8 +109,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <Button x:Name="btnSendMessage" Content="Send" Margin="10,10,0,0" Click="btnSendMessage_Click" Grid.Row="0" Width="100" FontSize="20"/>
-                            <TextBox x:Name="txtSendMessage" Margin="115,10,0,0" Grid.Row="0"/>
+                            <Button x:Name="btnSendMessage" Content="Pick Photo" Margin="10,10,0,0" Click="btnSendMessage_Click" Grid.Row="0" Width="100" FontSize="20"/>
+                            <!--TextBox x:Name="txtSendMessage" Margin="115,10,0,0" Grid.Row="0"/-->
                             <Button Name="btnCloseDevice" Content="Close Device" Grid.Row="1" Margin="10,10,0,0" Click="btnCloseDevice_Click" Height="45" Width="140" HorizontalContentAlignment="Center" FontSize="20"/>
                         </Grid>
                     </StackPanel>

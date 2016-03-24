@@ -150,8 +150,8 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <Button x:Name="btnSendMessage" Content="Send" Margin="5,10,0,0" Click="btnSendMessage_Click" Grid.Row="0" Height="45" Width="100" FontSize="20"/>
-                            <TextBox x:Name="txtSendMessage" Margin="110,10,0,0" Grid.Row="0"/>
+                            <Button x:Name="btnSendMessage" Content="Pick Photo" Margin="5,10,0,0" Click="btnSendMessage_Click" Grid.Row="0" Height="45" Width="100" FontSize="20"/>
+                            <!--TextBox x:Name="txtSendMessage" Margin="110,10,0,0" Grid.Row="0"/-->
                         </Grid>
                     </StackPanel>
 

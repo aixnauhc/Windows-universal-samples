@@ -313,7 +313,7 @@ namespace SDKTemplate
             rootPage.NotifyUserFromBackground("Connection status changed: " + sender.ConnectionStatus, NotifyType.StatusMessage);
         }
 
-        private void btnSendMessage_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void btnSendMessage_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             if (lvConnectedDevices.SelectedItems.Count == 0)
             {
@@ -321,11 +321,11 @@ namespace SDKTemplate
                 return;
             }
 
-            if (txtSendMessage.Text == "")
-            {
-                rootPage.NotifyUser("Please type a message to send", NotifyType.ErrorMessage);
-                return;
-            }
+            //if (txtSendMessage.Text == "")
+            //{
+            //    rootPage.NotifyUser("Please type a message to send", NotifyType.ErrorMessage);
+            //    return;
+            //}
 
             try
             {
@@ -335,9 +335,7 @@ namespace SDKTemplate
 
                     try
                     {
-                        var task = PickAFile();
-                        task.Wait();
-                        file = task.Result;
+                        file = await PickAFile();
                     }
                     catch
                     {

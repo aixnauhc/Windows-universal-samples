@@ -320,11 +320,11 @@ namespace SDKTemplate
                 return;
             }
 
-            if (txtSendMessage.Text == "")
-            {
-                rootPage.NotifyUser("Please type a message to send", NotifyType.ErrorMessage);
-                return;
-            }
+            //if (txtSendMessage.Text == "")
+            //{
+            //    rootPage.NotifyUser("Please type a message to send", NotifyType.ErrorMessage);
+            //    return;
+            //}
 
             try
             {
