@@ -14,7 +14,10 @@ using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using Windows.Devices.Enumeration;
 using System.ComponentModel;
+using System.IO;
+using System.Threading.Tasks;
 using Windows.Devices.WiFiDirect;
+using Windows.Storage;
 
 namespace SDKTemplate
 {
@@ -72,6 +75,22 @@ namespace SDKTemplate
             }
         }
 
+        public async void WriteImage(StorageFile image)
+        {
+            try
+            {
+                byte[] bytes = await FileToBytes(image);
+                _dataWriter.WriteUInt32((uint)bytes.Length);
+                _dataWriter.WriteBytes(bytes);
+                await _dataWriter.StoreAsync();
+                _rootPage.NotifyUserFromBackground("Sent message: " + image.DisplayName, NotifyType.StatusMessage);
+            }
+            catch (Exception ex)
+            {
+                _rootPage.NotifyUserFromBackground("WriteBytes threw exception: " + ex.Message, NotifyType.StatusMessage);
+            }
+        }
+
         public async void ReadMessage()
         {
             try
@@ -98,9 +117,72 @@ namespace SDKTemplate
             }
         }
 
+        public async void ReadImage()
+        {
+            try
+            {
+                UInt32 bytesRead = await _dataReader.LoadAsync(sizeof(UInt32));
+                if (bytesRead > 0)
+                {
+                    // Determine how long the string is.
+                    UInt32 messageLength = _dataReader.ReadUInt32();
+                    bytesRead = await _dataReader.LoadAsync(messageLength);
+                    if (bytesRead > 0)
+                    {
+                        // Decode the string.
+                        byte[] bytes = new byte[messageLength];
+                        _dataReader.ReadBytes(bytes);
+                        try
+                        {
+                            await BytesToFile(bytes);
+                        }
+                        catch(Exception ex)
+                        {
+                            _rootPage.NotifyUserFromBackground("Bytes to file exception: " + ex.Message, NotifyType.StatusMessage);
+                        }
+                        _rootPage.NotifyUserFromBackground("Got image: " , NotifyType.StatusMessage);
+
+                        ReadMessage();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                _rootPage.NotifyUserFromBackground("Socket was closed!", NotifyType.StatusMessage);
+            }
+        }
+
         public string GetCurrentMessage()
         {
             return _currentMessage;
+        }
+
+        public async Task<byte[]> FileToBytes(StorageFile file)
+        {
+            byte[] fileBytes = null;
+            using (IRandomAccessStreamWithContentType stream = await file.OpenReadAsync())
+            {
+                fileBytes = new byte[stream.Size];
+                using (DataReader reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    reader.ReadBytes(fileBytes);
+                }
+            }
+            return fileBytes;
+            //FileStream stream = File.OpenRead(@"c:\path\to\your\file\here.txt");
+            //byte[] fileBytes = new byte[stream.Length];
+            //
+            //stream.Read(fileBytes, 0, fileBytes.Length);
+            //stream.Close();
+        }
+
+        public async Task<StorageFile> BytesToFile(byte[] fileBytes)
+        {
+            StorageFolder picturesFolder = KnownFolders.PicturesLibrary;
+            StorageFile sampleFile = await picturesFolder.CreateFileAsync("sample123456", CreationCollisionOption.ReplaceExisting);
+            await FileIO.WriteBytesAsync(sampleFile, fileBytes);
+            return sampleFile;
         }
     }
 
